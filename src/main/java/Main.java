@@ -13,11 +13,14 @@ Poniższe zadania będą się sprowadzały do modyfikacji bazowego kodu. Proces 
 //Niepoprawny wiek – gdy jest mniejszy od 0 lub większy niż 100. Niepoprawna data urodzenia – gdy nie jest zapisana w formacie DD-MM-YYYY, np. 28-02-2023.
 
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 class WrongStudentName extends Exception { }
 class WrongAge extends Exception { }
 class WrongDateOfBirth extends Exception { }
+// wyjątek dla nie-numerycznego wyboru
+class WrongMenuChoice extends Exception { }
 
 public class Main {
     public static Scanner scan = new Scanner(System.in);
@@ -25,13 +28,17 @@ public class Main {
     public static void main(String[] args) {
         while (true) {
             try {
-                int ex = menu();
+                int ex = menu();  
                 switch (ex) {
                     case 1: exercise1(); break;
                     case 2: exercise2(); break;
                     case 3: exercise3(); break;
-                    default: return;
+                    case 0: return;
+                    default:
+                        System.out.println("Nie ma takiej opcji!");
                 }
+            } catch (WrongMenuChoice e) {
+                System.out.println("Błędny wybór menu! Wpisz liczbę, nie literę.");
             } catch (IOException e) {
                 System.out.println("Błąd wejścia/wyjścia!");
             } catch (WrongStudentName e) {
@@ -44,13 +51,20 @@ public class Main {
         }
     }
 
-    public static int menu() {
+    // Commit6_3: menu przez nextInt() + przechwycenie InputMismatchException
+    public static int menu() throws WrongMenuChoice {
         System.out.println("Wciśnij:");
         System.out.println("1 - aby dodać studenta");
         System.out.println("2 - aby wypisać wszystkich studentów");
         System.out.println("3 - aby wyszukać studenta po imieniu");
         System.out.println("0 - aby wyjść z programu");
-        return scan.nextInt();
+        try {
+            int choice = scan.nextInt();
+            return choice;
+        } catch (InputMismatchException ime) {
+            scan.nextLine();               // skasuj nieprawidłowy token
+            throw new WrongMenuChoice();
+        }
     }
 
     public static String ReadName() throws WrongStudentName {
