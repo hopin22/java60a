@@ -1,5 +1,5 @@
 /*
-Program sprawdza poprawność wpisywanego imienia. W przypadku wystąpienia spacji w imieniu, funkcja wyrzuca zdefiniowany wyjątek WrongStudentName, który jest wyłapywany w pętli głównej Commit6_0.
+12Program sprawdza poprawność wpisywanego imienia. W przypadku wystąpienia spacji w imieniu, funkcja wyrzuca zdefiniowany wyjątek WrongStudentName, który jest wyłapywany w pętli głównej Commit6_0.
 Poniższe zadania będą się sprowadzały do modyfikacji bazowego kodu. Proces modyfikacji ogólnie może wyglądać następująco:
 • Ustalenie jaki błąd chcę się sprawdzić i wyłapać.
 • Decyzja, czy użyje się własnej klasy wyjątku, czy wykorzysta już istniejące (np. Exception, IOException).
@@ -19,7 +19,6 @@ import java.util.Scanner;
 class WrongStudentName extends Exception { }
 class WrongAge extends Exception { }
 class WrongDateOfBirth extends Exception { }
-// wyjątek dla nie-numerycznego wyboru
 class WrongMenuChoice extends Exception { }
 
 public class Main {
@@ -34,11 +33,9 @@ public class Main {
                     case 2: exercise2(); break;
                     case 3: exercise3(); break;
                     case 0: return;
-                    default:
-                        System.out.println("Nie ma takiej opcji!");
                 }
             } catch (WrongMenuChoice e) {
-                System.out.println("Błędny wybór menu! Wpisz liczbę, nie literę.");
+                System.out.println("Błędny wybór menu! Wpisz cyfrę od 0 do 3.");
             } catch (IOException e) {
                 System.out.println("Błąd wejścia/wyjścia!");
             } catch (WrongStudentName e) {
@@ -51,7 +48,7 @@ public class Main {
         }
     }
 
-    // Commit6_3: menu przez nextInt() + przechwycenie InputMismatchException
+ 
     public static int menu() throws WrongMenuChoice {
         System.out.println("Wciśnij:");
         System.out.println("1 - aby dodać studenta");
@@ -60,9 +57,13 @@ public class Main {
         System.out.println("0 - aby wyjść z programu");
         try {
             int choice = scan.nextInt();
+            if (choice < 0 || choice > 3) {
+                scan.nextLine(); 
+                throw new WrongMenuChoice();
+            }
             return choice;
         } catch (InputMismatchException ime) {
-            scan.nextLine();               // skasuj nieprawidłowy token
+            scan.nextLine(); 
             throw new WrongMenuChoice();
         }
     }
